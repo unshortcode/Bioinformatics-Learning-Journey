@@ -1,0 +1,13 @@
+# Bỏ qua tất cả file trong thư mục data
+data/
+
+# Bỏ qua các file nặng có đuôi
+*.fastq
+*.fastq.gz
+*.bam
+*.vcf
+
+# Bỏ qua các file tạm của hệ thống
+__pycache__/
+.DS_Store
+.snakemake/
