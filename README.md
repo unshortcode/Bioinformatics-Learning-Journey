@@ -1,5 +1,15 @@
 # Bioinformatics-Learning-Journey
 
+## Reference Genome
+
+### Download and rename to 'ecoli_ref.fasta.gz'
+
+`wget -O refs/ecoli_ref.fasta.gz https://ftp.ncbi.nlm.nih.gov/genomes/all/GCF/000/005/845/GCF_000005845.2_ASM584v2/GCF_000005845.2_ASM584v2_genomic.fna.gz`
+
+### Unzip file .gz to .fasta
+
+`gunzip refs/ecoli_ref.fasta.gz`
+
 ## Raw Data
 
 Dữ liệu Raw FASTQ quá lớn để lưu trên Github
