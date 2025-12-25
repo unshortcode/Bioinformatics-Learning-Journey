@@ -3,7 +3,7 @@ rule all:
         "results/qc/reads_1_fastqc.html",
         "results/qc/reads_2_fastqc.html",
 
-        "results/trimmed/reads_1_paired.fastq.gz",
+        "results/mapped/aligned.bam",
 
 # RULE: TRIMMOMATIC
 rule trim_reads:
@@ -29,3 +29,29 @@ rule trim_reads:
         "{output.r1_paired} {output.r1_unpaired} "
         "{output.r2_paired} {output.r2_unpaired} "
         "{params.trimmer} 2> {log}"
+
+# RULE: Index cho reference genome
+rule bwa_index:
+    input:
+        "refs/ecoli_ref.fasta"
+    output:
+        "refs/ecoli_ref.fasta.bwt"
+    shell:
+        "bwa index {input}"
+
+# RULE: Alignment/
+rule bwa_map:
+    input:
+        ref = "refs/ecoli_ref.fasta",
+        index = "refs/ecoli_ref.fasta.bwt", # Bắt buộc phải có index mới chạy được
+        r1 = "results/trimmed/reads_1_paired.fastq.gz", # Lấy từ output của Trimmomatic
+        r2 = "results/trimmed/reads_2_paired.fastq.gz"
+    output:
+        "results/mapped/aligned.bam"
+    threads: 4  # Dùng 4 nhân CPU 
+    shell:
+        # Giải thích lệnh:
+        # bwa mem: Thuật toán mapping
+        # -t {threads}: Số luồng CPU
+        # | samtools view -Sb -: Nén ngay lập tức từ SAM sang BAM (Tiết kiệm dung lượng)
+        "bwa mem -t {threads} {input.ref} {input.r1} {input.r2} | samtools view -Sb - > {output}"

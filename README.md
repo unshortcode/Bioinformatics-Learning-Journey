@@ -76,3 +76,23 @@
 ### Cập nhật Rule Trimming cho Snakefile.
 - Kết quả nằm ở file logs/trimmomatic.log, cho thấy:
     - Tỉ lệ Both Surviving là 87.56 % (cao), forward only surviving là 11.01 %, reverse only Surviving là 0.72 %, Drop là 0.72 % --> cho thấy dữ liệu gốc khá sạch.
+
+## Alignment
+- Tools: bwa ()
+
+### Cập nhật Rule index và Mapping cho Snakefile
+
+- Chạy lệnh: snakemake -c4 (Dùng 4 core).
+- Dùng lệnh sau để kiểm tra xem file BAM có thực sự chứa dữ liệu không (Lệnh này sẽ báo cáo bao nhiêu % reads đã được map thành công).
+
+`samtools flagstat results/mapped/aligned.bam`
+
+Kết quả:
+```
+2585326 + 0 mapped (94.40% : N/A) # bwa tìm được vị trí chính xác cho 94.4 % số lượng reads trên reference genome của E. coli K12
+...
+2479400 + 0 properly paired (91.16% : N/A) # điều này chứng minh read 1 và 2 đều nằm trên cùng nhiễm sắc thể và hướng vào nhau (ngược chiều)
+...
+19219 + 0 singletons (0.71% : N/A) # 0.71 % read 1 map được, trimming đã loại bỏ các cặp chất lượng kém
+```
+
