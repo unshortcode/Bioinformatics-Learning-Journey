@@ -65,4 +65,14 @@
 
 --> Cắt bỏ (Trimming) đoạn cuối bị nhiễu và Adapter
 
+## Trimming
 
+- Tool: Trimmomatic
+
+### Tải file TruSeq3-PE.fa (Adapter chuẩn cho Illumina Paired-End)
+
+`wget -O refs/adapters.fa https://github.com/timflutre/trimmomatic/raw/master/adapters/TruSeq3-PE.fa`
+
+### Cập nhật Rule Trimming cho Snakefile.
+- Kết quả nằm ở file logs/trimmomatic.log, cho thấy:
+    - Tỉ lệ Both Surviving là 87.56 % (cao), forward only surviving là 11.01 %, reverse only Surviving là 0.72 %, Drop là 0.72 % --> cho thấy dữ liệu gốc khá sạch.

@@ -1,0 +1,9 @@
+TrimmomaticPE: Started with arguments:
+ data/reads_1.fastq.gz data/reads_2.fastq.gz results/trimmed/reads_1_paired.fastq.gz results/trimmed/reads_1_unpaired.fastq.gz results/trimmed/reads_2_paired.fastq.gz results/trimmed/reads_2_unpaired.fastq.gz ILLUMINACLIP:refs/adapters.fa:2:30:10 SLIDINGWINDOW:4:20 MINLEN:36
+Multiple cores found: Using 4 threads
+ILLUMINACLIP: Using adapter file from current working directory: /home/eudaimonia/Tet_project/Bioinformatics-Learning-Journey/refs/adapters.fa
+Using PrefixPair: 'TACACTCTTTCCCTACACGACGCTCTTCCGATCT' and 'GTGACTGGAGTTCAGACGTGTGCTCTTCCGATCT'
+ILLUMINACLIP: Using 1 prefix pairs, 0 forward/reverse sequences, 0 forward only sequences, 0 reverse only sequences
+Quality encoding detected as phred33
+Input Read Pairs: 1553259 Both Surviving: 1359968 (87.56%) Forward Only Surviving: 171046 (11.01%) Reverse Only Surviving: 11107 (0.72%) Dropped: 11138 (0.72%)
+TrimmomaticPE: Completed successfully
