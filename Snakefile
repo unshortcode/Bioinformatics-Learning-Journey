@@ -3,7 +3,7 @@ rule all:
         "results/qc/reads_1_fastqc.html",
         "results/qc/reads_2_fastqc.html",
         "results/mapped/aligned.bam",
-        "results/variants/raw_variants.vcf"
+        "results/variants/filtered_variants.vcf"
         
 
 # RULE: TRIMMOMATIC
@@ -76,3 +76,12 @@ rule call_variants:
                                                       # -O output format là `v` VCF 
                                                       # -o ghi kết quả vào file output
                                                       # 2>{log} chỉ ghi lại lỗi vào file log
+
+# RULE: FILTERING
+rule filter_variants:
+    input:
+        "results/variants/raw_variants.vcf"
+    output:
+        "results/variants/filtered_variants.vcf"
+    shell:
+        "bcftools filter -O v -o {output} -e 'QUAL<20 || DP<10' {input}"
