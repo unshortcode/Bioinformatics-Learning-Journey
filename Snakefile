@@ -3,7 +3,7 @@ rule all:
         "results/qc/reads_1_fastqc.html",
         "results/qc/reads_2_fastqc.html",
         "results/mapped/aligned.bam",
-        "results/variants/filtered_variants.vcf"
+        "results/variants/vcf_stats.txt"
         
 
 # RULE: TRIMMOMATIC
@@ -85,3 +85,13 @@ rule filter_variants:
         "results/variants/filtered_variants.vcf"
     shell:
         "bcftools filter -O v -o {output} -e 'QUAL<20 || DP<10' {input}"
+
+# RULE: Thống kê biến thể (stats)
+rule vcf_stats:
+    input:
+        "results/variants/filtered_variants.vcf"
+    output:
+        "results/variants/vcf_stats.txt"
+    shell:
+        # bcftools stats: Tính toán thống kê
+        "bcftools stats {input} > {output}"
