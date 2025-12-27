@@ -3,8 +3,7 @@ rule all:
         "results/qc/reads_1_fastqc.html",
         "results/qc/reads_2_fastqc.html",
         "results/mapped/aligned.bam",
-        "results/variants/vcf_stats.txt"
-        
+        "results/variants/vcf_stats.txt"        
 
 # RULE: TRIMMOMATIC
 rule trim_reads:
@@ -95,3 +94,4 @@ rule vcf_stats:
     shell:
         # bcftools stats: Tính toán thống kê
         "bcftools stats {input} > {output}"
+        
