@@ -109,4 +109,17 @@ Kết quả:
     - `-v` là invert match
     --> tìm những dòng CÓ dữ liệu đột biến
 - Kết quả là: 34834 khác biệt
+    --> Quá nhiều đột biến, có khả năng là nhiễu hoặc chủng E. coli khác
+    --> Tiến hành lọc
 
+## Filter Variants Calling
+
+### Cập nhật Rule FILTERING cho Snakefile
+- Chạy lệnh `grep -v "^#" results/variants/filtered_variants.vcf | wc -l` để đếm số lượng đột biến đã qua filter
+- Kết quả: 34044
+--> Khả năng cao là khác chủng.
+
+## VCF Stats
+
+### Cập nhật Rule Thống kê biến thể (stats) cho Snakefile
+- 
