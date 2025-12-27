@@ -2,8 +2,9 @@ rule all:
     input:
         "results/qc/reads_1_fastqc.html",
         "results/qc/reads_2_fastqc.html",
-
         "results/mapped/aligned.bam",
+        "results/variants/raw_variants.vcf"
+        
 
 # RULE: TRIMMOMATIC
 rule trim_reads:
@@ -15,7 +16,7 @@ rule trim_reads:
         # File quan trọng dùng để đi tiếp
         r1_paired = "results/trimmed/reads_1_paired.fastq.gz",
         r2_paired = "results/trimmed/reads_2_paired.fastq.gz",
-        # File bị loại, giữ lại để đối chứng)
+        # File bị loại, giữ lại để đối chứng
         r1_unpaired = "results/trimmed/reads_1_unpaired.fastq.gz",
         r2_unpaired = "results/trimmed/reads_2_unpaired.fastq.gz"
     log:
@@ -39,7 +40,7 @@ rule bwa_index:
     shell:
         "bwa index {input}"
 
-# RULE: Alignment/
+# RULE: Alignment
 rule bwa_map:
     input:
         ref = "refs/ecoli_ref.fasta",
@@ -54,4 +55,24 @@ rule bwa_map:
         # bwa mem: Thuật toán mapping
         # -t {threads}: Số luồng CPU
         # | samtools view -Sb -: Nén ngay lập tức từ SAM sang BAM (Tiết kiệm dung lượng)
-        "bwa mem -t {threads} {input.ref} {input.r1} {input.r2} | samtools view -Sb - > {output}"
+        "bwa mem -t {threads} {input.ref} {input.r1} {input.r2} | samtools view -b - > {output}"
+
+# RULE: VARIANT CALLING
+rule call_variants:
+    input:
+        ref = "refs/ecoli_ref.fasta",
+        bam = "results/mapped/aligned.bam"
+    output:
+        "results/variants/raw_variants.vcf"
+    log:
+        "logs/bcftools.log"
+    shell:
+        "(samtools sort {input.bam} -o - | "  # sắp xếp các đoạn reads theo đúng thứ tự NST đi từ 1
+                                              # -o output cho vào ống dẫn `-`
+        "bcftools mpileup -f {input.ref} -Ou - | " # mpileup lấy các reads chồng lên ref xem vị trí khớp và lệch
+                                                   # -f file ref
+                                                   # -O output format là `u` uncompressed BCF để máy đọc nhanh hơn
+        "bcftools call -mv -Ov -o {output}) 2>{log}"  # variant calling với -m là Multicallectic caller cho phép 1 vị trí có nhiều kiểu đột biến và `v` loại bỏ những dòng không có đột biến
+                                                      # -O output format là `v` VCF 
+                                                      # -o ghi kết quả vào file output
+                                                      # 2>{log} chỉ ghi lại lỗi vào file log
