@@ -101,7 +101,6 @@ Kết quả:
 ### Cập nhật Rule Variant Calling cho Snakefile
 
 ### Đếm số đột biến
-
 `grep -v "^#" results/variants/raw_variants.vcf | wc -l`
 
 - Giải thích đoạn code trên:
@@ -109,17 +108,21 @@ Kết quả:
     - `-v` là invert match
     --> tìm những dòng CÓ dữ liệu đột biến
 - Kết quả là: 34834 khác biệt
-    --> Quá nhiều đột biến, có khả năng là nhiễu hoặc chủng E. coli khác
+    --> Quá nhiều đột biến, có khả năng là nhiễu do trimming/mapping hoặc chủng E. coli khác
     --> Tiến hành lọc
 
 ## Filter Variants Calling
+- Filter Criteria:
+    - QUAL > 20: Điểm chất lượng phán đoán phải > 20 (tức là độ tin cậy > 99%)
+    - DP > 10 (Depth): Tại vị trí đột biến đó, phải có ít nhất 10 reads chồng lên nhau
 
 ### Cập nhật Rule FILTERING cho Snakefile
 - Chạy lệnh `grep -v "^#" results/variants/filtered_variants.vcf | wc -l` để đếm số lượng đột biến đã qua filter
 - Kết quả: 34044
---> Khả năng cao là khác chủng.
+--> dữ liệu có độ tin cậy cao, chứng tỏ bước trimming và mapping chuẩn
 
 ## VCF Stats
 
 ### Cập nhật Rule Thống kê biến thể (stats) cho Snakefile
-- 
+
+
