@@ -96,33 +96,75 @@ Kết quả:
 ```
 
 ## Variant Calling
-- Tools: samtools, bcftools
+
+-   Tools: samtools, bcftools
 
 ### Cập nhật Rule Variant Calling cho Snakefile
 
 ### Đếm số đột biến
+
 `grep -v "^#" results/variants/raw_variants.vcf | wc -l`
 
-- Giải thích đoạn code trên:
-    - `^` bắt đầu dòng với ký tự `#` (trong vcf thì "\#" đại diện cho các dòng KHÔNG có dữ liệu đột biến)
-    - `-v` là invert match
-    --> tìm những dòng CÓ dữ liệu đột biến
-- Kết quả là: 34834 khác biệt
-    --> Quá nhiều đột biến, có khả năng là nhiễu do trimming/mapping hoặc chủng E. coli khác
-    --> Tiến hành lọc
+-   Giải thích đoạn code trên:
+    -   `^` bắt đầu dòng với ký tự `#` (trong vcf thì "\#" đại diện cho các dòng KHÔNG có dữ liệu đột biến)
+    -   `-v` là invert match --\> tìm những dòng CÓ dữ liệu đột biến
+-   Kết quả là: 34834 khác biệt --\> Quá nhiều đột biến, có khả năng là nhiễu do trimming/mapping hoặc chủng E. coli khác --\> Tiến hành lọc
 
 ## Filter Variants Calling
-- Filter Criteria:
-    - QUAL > 20: Điểm chất lượng phán đoán phải > 20 (tức là độ tin cậy > 99%)
-    - DP > 10 (Depth): Tại vị trí đột biến đó, phải có ít nhất 10 reads chồng lên nhau
+
+-   Filter Criteria:
+    -   QUAL \> 20: Điểm chất lượng phán đoán phải \> 20 (tức là độ tin cậy \> 99%)
+    -   DP \> 10 (Depth): Tại vị trí đột biến đó, phải có ít nhất 10 reads chồng lên nhau
 
 ### Cập nhật Rule FILTERING cho Snakefile
-- Chạy lệnh `grep -v "^#" results/variants/filtered_variants.vcf | wc -l` để đếm số lượng đột biến đã qua filter
-- Kết quả: 34044
---> dữ liệu có độ tin cậy cao, chứng tỏ bước trimming và mapping chuẩn
+
+-   Chạy lệnh `grep -v "^#" results/variants/filtered_variants.vcf | wc -l` để đếm số lượng đột biến đã qua filter
+-   Kết quả: 34044 --\> dữ liệu có độ tin cậy cao, chứng tỏ bước trimming và mapping chuẩn
 
 ## VCF Stats
 
+-   Tool: bcftools
+
 ### Cập nhật Rule Thống kê biến thể (stats) cho Snakefile
 
+-   Dùng lệnh sau để lọc lấy phần Summary (SN) trong file báo cáo: `grep "^SN" results/variants/vcf_stats.txt`
+-   Kết quả là:
 
+```         
+SN      0       number of samples:      1
+SN      0       number of records:      34044
+SN      0       number of no-ALTs:      0
+SN      0       number of SNPs: 33775
+SN      0       number of MNPs: 0
+SN      0       number of indels:       269
+SN      0       number of others:       0
+SN      0       number of multiallelic sites:   11
+SN      0       number of multiallelic SNP sites:       11
+```
+
+### Phân tích số liệu:
+
+-   SNPs (33,775): Chiếm tới 99.2% tổng số biến thể
+-   Indels (269): Chỉ chiếm 0.8% --\> Kết luận: Tỷ lệ SNP/Indel (\>125 lần) cho thấy sự tách biệt tiến hóa tự nhiên giữa hai họ hàng. Nếu là lỗi máy (Sequencing Error), tỷ lệ Indel thường sẽ cao hơn nhiều do máy đọc hay bị trượt (slippage).
+
+### Chỉ số Ts/Tv (Transition/Transversion)
+
+::: callout-tip
+-   Ts (Transition): Biến đổi A \<-\> G hoặc C \<-\> T (Cùng loại purine/pyrimidine). Hóa học dễ xảy ra hơn.
+
+-   Tv (Transversion): Biến đổi chéo A \<-\> C, A \<-\> T... (Khác loại). Hóa học khó xảy ra hơn.
+
+-   Quy luật tự nhiên: Trong sinh học, Ts xảy ra nhiều hơn Tv. Tỷ lệ Ts/Tv thường **\> 1.0** (thường là 2:1 ở người, và \>1.5 ở vi khuẩn).
+
+-   Do lỗi máy (Random): Lỗi ngẫu nhiên thì Ts hay Tv xác suất như nhau. Tỷ lệ Ts/Tv sẽ **\~ 0.5**.
+:::
+
+- Chạy lệnh sau để kiểm tra tỷ lệ Ts/Tv: `grep "TSTV" results/variants/vcf_stats.txt`
+- Kết quả: cột [5]
+```
+# TSTV, transitions/transversions:
+# TSTV  [2]id   [3]ts   [4]tv   [5]ts/tv        [6]ts (1st ALT) [7]tv (1st ALT) [8]ts/tv (1st ALT)
+TSTV    0       24336   9450    2.58    24333   9442    2.58
+```
+
+--> Kết luận: 34,044 biến thể này là sự khác biệt sinh học giữa chủng E. coli K-12 (reference) và chủng E. coli được giải trình tự.
