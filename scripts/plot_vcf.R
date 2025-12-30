@@ -1,8 +1,6 @@
 # Load thư viện cần thiết
 # vcfR: Để đọc file VCF chuyên dụng
 library(vcfR)
-# ggplot2: Để vẽ biểu đồ
-library(ggplot2)
 
 # Nhận tham số từ dòng lệnh (Do Snakemake truyền vào)
 # args[1] sẽ là file VCF
@@ -17,31 +15,35 @@ print(paste("Processing:", vcf_file))
 # 1. Đọc file VCF
 vcf <- read.vcfR(vcf_file, verbose = FALSE)
 
-# 2. Lấy dữ liệu cơ bản (CHROM, POS, ID, REF, ALT, QUAL, FILTER)
-# getFIX là hàm của vcfR để lấy các cột thông tin cố định
-vcf_data <- getFIX(vcf)
+# 2. Đọc file fasta của reference genome
+seq_ref <- ape::read.dna("refs/ecoli_ref.fasta", format = "fasta")
 
-# Chuyển nó thành bảng dữ liệu (Data Frame) quen thuộc
-df <- as.data.frame(vcf_data)
+# 3. Tạo chrom object
+chrom <- create.chromR(
+  name = "E. Coli Analysis (filtered)",
+  vcf = vcf,
+  seq = seq_ref,
+  verbose = FALSE
+)
 
-# 3. Làm sạch dữ liệu
-# Cột QUAL (Chất lượng) đang ở dạng chữ (Character), phải chuyển sang số (Numeric) để vẽ
-df$QUAL <- as.numeric(as.character(df$QUAL))
+# 4. Tạo mask để chọn lọc dữ liệu hiển thị
+chrom_mask <- masker(
+  chrom,
+  min_QUAL = 0,
+  min_DP = 0,
+  max_DP = 150,
+  min_MQ = 30,
+  max_MQ = 60.5
+)
 
-# Kiểm tra xem có bao nhiêu dòng
-print(paste("Number of Variants:", nrow(df)))
+# Mở file PDF
+pdf(output_file)
 
-# Tạo canvas vẽ từ dữ liệu df, trục x là cột QUAL
-p <- ggplot(data = df, aes(x = QUAL)) +
-  # Vẽ biểu đồ cột (Histogram)
-  geom_histogram(fill = "steelblue", color = "white", bins = 30) +
-  # Gắn nhãn cho dễ hiểu
-  labs(
-    title = "Phan bo diem chat luong (Quality Score)",
-    x = "Diem Chat Luong (QUAL)",
-    y = "So luong bien the"
-  ) +
-  # Chọn giao diện nền trắng đơn giản
-  theme_minimal()
+# In biểu đồ vào file pdfpdf
+plot(chrom_mask)
+chromoqc(chrom_mask)
 
-print(paste("Results at", output_file))
+# Đóng file
+dev.off()
+
+print(paste("Results at", output_file)) # hiển thị kết quả

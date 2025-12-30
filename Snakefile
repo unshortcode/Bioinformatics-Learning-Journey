@@ -3,7 +3,8 @@ rule all:
         "results/qc/reads_1_fastqc.html",
         "results/qc/reads_2_fastqc.html",
         "results/mapped/aligned.bam",
-        "results/variants/vcf_stats.txt"        
+        "results/variants/vcf_stats.txt",
+        "results/plots/quality_plot.pdf"
 
 # RULE: TRIMMOMATIC
 rule trim_reads:
@@ -94,4 +95,12 @@ rule vcf_stats:
     shell:
         # bcftools stats: Tính toán thống kê
         "bcftools stats {input} > {output}"
-        
+
+# RULE: Vẽ biểu đồ bằng R scripts
+rule plot_quality:
+    input:
+        "results/variants/filtered_variants.vcf"
+    output:
+        "results/plots/quality_plot.pdf"
+    shell:
+        "Rscript scripts/plot_vcf.R {input} {output}"
