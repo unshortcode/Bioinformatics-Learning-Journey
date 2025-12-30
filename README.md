@@ -159,12 +159,35 @@ SN      0       number of multiallelic SNP sites:       11
 -   Do lỗi máy (Random): Lỗi ngẫu nhiên thì Ts hay Tv xác suất như nhau. Tỷ lệ Ts/Tv sẽ **\~ 0.5**.
 :::
 
-- Chạy lệnh sau để kiểm tra tỷ lệ Ts/Tv: `grep "TSTV" results/variants/vcf_stats.txt`
-- Kết quả: cột [5]
-```
+-   Chạy lệnh sau để kiểm tra tỷ lệ Ts/Tv: `grep "TSTV" results/variants/vcf_stats.txt`
+-   Kết quả: cột \[5\]
+
+```         
 # TSTV, transitions/transversions:
 # TSTV  [2]id   [3]ts   [4]tv   [5]ts/tv        [6]ts (1st ALT) [7]tv (1st ALT) [8]ts/tv (1st ALT)
 TSTV    0       24336   9450    2.58    24333   9442    2.58
 ```
 
---> Kết luận: 34,044 biến thể này là sự khác biệt sinh học giữa chủng E. coli K-12 (reference) và chủng E. coli được giải trình tự.
+--\> Kết luận: 34,044 biến thể này là sự khác biệt sinh học giữa chủng E. coli K-12 (reference) và chủng E. coli được giải trình tự.
+
+## Visualization
+
+### Dùng R script để vẽ biểu đồ
+
+-   Library: vcfR, ape, ggplot.
+-   Cập nhật `Snakefile` và tạo file `plot_vcf.R`.
+    -   Tạo chrom object để vẽ biểu đồ histogram
+    -   Dùng ggplot để vẽ biểu đồ kiểu thay thế (Substitution)
+
+### Kết quả
+
+![VCF Summary Histograms](images/ecoli_vcf_summary.png)
+
+
+
+![Genome-wide QC Plot](images/ecoli_chromoqc_plot.png)
+
+
+
+![SNP Substitution Spectrum](images/ecoli_substitution.png)
+

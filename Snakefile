@@ -4,7 +4,7 @@ rule all:
         "results/qc/reads_2_fastqc.html",
         "results/mapped/aligned.bam",
         "results/variants/vcf_stats.txt",
-        "results/plots/quality_plot.pdf"
+        "results/plots/filtered_variants_visualization.pdf"
 
 # RULE: TRIMMOMATIC
 rule trim_reads:
@@ -101,6 +101,6 @@ rule plot_quality:
     input:
         "results/variants/filtered_variants.vcf"
     output:
-        "results/plots/quality_plot.pdf"
+        "results/plots/filtered_variants_visualization.pdf"
     shell:
         "Rscript scripts/plot_vcf.R {input} {output}"
