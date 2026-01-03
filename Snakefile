@@ -4,7 +4,7 @@ rule all:
         "results/qc/reads_2_fastqc.html",
         "results/mapped/aligned.bam",
         #"results/variants/vcf_stats.txt",
-        "results/variants/filtered_targeted.vcf"
+        "results/variants/filtered_targeted.vcf",
         #"results/plots/filtered_variants_visualization.pdf"
         "results/plots/target_gene_visualization.pdf"
 
