@@ -1,4 +1,3 @@
 Note: none of --samples-file, --ploidy or --ploidy-file given, assuming all sites are diploid
-[bam_sort_core] merging from 1 files and 1 in-memory blocks...
 [mpileup] 1 samples in 1 input files
 [mpileup] maximum number of reads per input file set to -d 250

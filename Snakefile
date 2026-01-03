@@ -70,8 +70,7 @@ rule filter_targets:
         # bedtools intersect chỉ giữ lại những read chồng lên với vùng liệt kê trong file .bed
         # -a là file .bam đầu vào
         # -b là file .bed chứa vị trí của target
-        # -header giữ lại header của file .bam
-        "bedtools intersect -a {input.bam} -b {input.bed} -header > {output}"
+        "bedtools intersect -a {input.bam} -b {input.bed} > {output}"
 
 # RULE: VARIANT CALLING
 rule call_variants:

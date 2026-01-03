@@ -220,3 +220,17 @@ EOF
 ```
 Giải thích: cột 1 là tên nhiễm sắc thể, cột 2 là điểm bắt đầu, cột 3 là điểm kết thúc, cột 4 là tên vùng (Annotation)
 
+### Cập nhật file Snake file
+- Cập nhật rule sau vào giữa rule bwa_map và call_variants
+```python
+rule filter_targets:
+    input:
+        bam = "results/mapped/aligned.bam",
+        bed = "refs/targets.bed"
+    output:
+        "results/mapped/filter_targets.bam"
+    shell:
+        "bedtools intersect -a {input.bam} -b {input.bed} > {output}"
+```
+
+- Sửa lại đầu vào và đầu ra cho các rule all, call_variants, filter_variants, plot_quality
