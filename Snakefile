@@ -3,8 +3,10 @@ rule all:
         "results/qc/reads_1_fastqc.html",
         "results/qc/reads_2_fastqc.html",
         "results/mapped/aligned.bam",
-        "results/variants/vcf_stats.txt",
-        "results/plots/filtered_variants_visualization.pdf"
+        #"results/variants/vcf_stats.txt",
+        "results/variants/filtered_targeted.vcf"
+        #"results/plots/filtered_variants_visualization.pdf"
+        "results/plots/target_gene_visualization.pdf"
 
 # RULE: TRIMMOMATIC
 rule trim_reads:
@@ -57,13 +59,29 @@ rule bwa_map:
         # | samtools view -Sb -: Nén ngay lập tức từ SAM sang BAM (Tiết kiệm dung lượng)
         "bwa mem -t {threads} {input.ref} {input.r1} {input.r2} | samtools view -b - > {output}"
 
+# RULE: Target Filter
+rule filter_targets:
+    input:
+        bam = "results/mapped/aligned.bam",
+        bed = "refs/targets.bed"
+    output:
+        "results/mapped/filtered_targets.bam"
+    shell:
+        # bedtools intersect chỉ giữ lại những read chồng lên với vùng liệt kê trong file .bed
+        # -a là file .bam đầu vào
+        # -b là file .bed chứa vị trí của target
+        # -header giữ lại header của file .bam
+        "bedtools intersect -a {input.bam} -b {input.bed} -header > {output}"
+
 # RULE: VARIANT CALLING
 rule call_variants:
     input:
         ref = "refs/ecoli_ref.fasta",
-        bam = "results/mapped/aligned.bam"
+        # bam = "results/mapped/aligned.bam"
+        bam = "results/mapped/filtered_targets.bam"
     output:
-        "results/variants/raw_variants.vcf"
+        # "results/variants/raw_variants.vcf"
+        "results/variants/raw_targeted.vcf"
     log:
         "logs/bcftools.log"
     shell:
@@ -80,18 +98,20 @@ rule call_variants:
 # RULE: FILTERING
 rule filter_variants:
     input:
-        "results/variants/raw_variants.vcf"
+        "results/variants/raw_targeted.vcf"
     output:
-        "results/variants/filtered_variants.vcf"
+        "results/variants/filtered_targeted.vcf"
     shell:
         "bcftools filter -O v -o {output} -e 'QUAL<20 || DP<10' {input}"
 
 # RULE: Thống kê biến thể (stats)
 rule vcf_stats:
     input:
-        "results/variants/filtered_variants.vcf"
+        #"results/variants/filtered_variants.vcf"
+        "results/variants/filtered_targeted.vcf"
     output:
-        "results/variants/vcf_stats.txt"
+        #"results/variants/vcf_stats.txt"
+        "results/variants/vcf_stats_targeted.txt"
     shell:
         # bcftools stats: Tính toán thống kê
         "bcftools stats {input} > {output}"
@@ -99,8 +119,10 @@ rule vcf_stats:
 # RULE: Vẽ biểu đồ bằng R scripts
 rule plot_quality:
     input:
-        "results/variants/filtered_variants.vcf"
+        #"results/variants/filtered_variants.vcf"        
+        "results/variants/filtered_targeted.vcf"        
     output:
-        "results/plots/filtered_variants_visualization.pdf"
+        #"results/plots/filtered_variants_visualization.pdf"
+        "results/plots/target_gene_visualization.pdf"
     shell:
         "Rscript scripts/plot_vcf.R {input} {output}"
