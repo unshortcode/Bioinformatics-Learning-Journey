@@ -198,3 +198,25 @@ TSTV    0       24336   9450    2.58    24333   9442    2.58
 - Transition/Tranversion: có sự chênh lệch lớn của Transition ($A \leftrightarrow G$ và $C \leftrightarrow T$) so với Tranversion ($A \leftrightarrow C$ và $G \leftrightarrow T$)
 
 $\rightarrow$ Tần suất của Transition cao phù hợp với quá trình tiến hóa của vi khuẩn, không phải do lỗi kỹ thuật
+
+# SIMULATION
+
+## Download Cơ sở dữ liệu E.coli K12 MG1655
+
+- Tool: snpEff
+- Chạy lệnh: `snpEff download Escherichia_coli_str_k_12_substr_mg1655`
+
+## Target Filter
+
+### Tạo file .bed giả lập trình tự gen target
+- Để mô phỏng "Targeted Sequencing", cần một file .bed quy định toạ độ.
+- Chạy lệnh sau:
+```Bash
+cat <<EOF > refs/targets.bed
+NC_000913.3	4181245	4185506	rpoB_gene
+NC_000913.3	2337766	2340368	gyrA_gene
+NC_000913.3	35000	36000	dummy_region
+EOF
+```
+Giải thích: cột 1 là tên nhiễm sắc thể, cột 2 là điểm bắt đầu, cột 3 là điểm kết thúc, cột 4 là tên vùng (Annotation)
+
