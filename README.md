@@ -183,11 +183,18 @@ TSTV    0       24336   9450    2.58    24333   9442    2.58
 
 ![VCF Summary Histograms](images/ecoli_vcf_summary.png)
 
-
+- Read Depth: biểu đồ tần suất có dạng hình chuông, hầu hết các biến thể nằm trong khoảng 60X-80X, cho thấy mức tin cậy của phát hiện
+- Mapping Quality: phần lớn các read đạt được điểm cao nhất là 60, cho thấy sự khớp với bộ gen tham chiếu
+- Quality (QUAL): phân phối nghiêng hẵng về phía giá trị cao (>200), cho thấy các biến thể được phát hiện có ý nghĩa thống kê.
 
 ![Genome-wide QC Plot](images/ecoli_chromoqc_plot.png)
 
-
+- Read depth (DP), mapping quality (MQ) và variant quality (QUAL) được hiển thị dọc theo chiều dài bộ gen tham chiếu (4.6 Mb).
+- DP ổn định trên toàn bộ gen, không có khoảng trống lớn hoặc điểm nhọn bất thường, cho thấy library giải trình tự chất lượng cao
+- MP duy trì ở mức 60 hầu hết trên bộ gen.
 
 ![SNP Substitution Spectrum](images/ecoli_substitution.png)
 
+- Transition/Tranversion: có sự chênh lệch lớn của Transition ($A \leftrightarrow G$ và $C \leftrightarrow T$) so với Tranversion ($A \leftrightarrow C$ và $G \leftrightarrow T$)
+
+$\rightarrow$ Tần suất của Transition cao phù hợp với quá trình tiến hóa của vi khuẩn, không phải do lỗi kỹ thuật
