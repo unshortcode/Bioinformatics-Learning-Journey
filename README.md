@@ -234,3 +234,6 @@ rule filter_targets:
 ```
 
 - Sửa lại đầu vào và đầu ra cho các rule all, call_variants, filter_variants, plot_quality
+- Dùng lệnh `grep -v "#" results/variants/filtered_targeted.vcf | wc -l` để đếm số biến thể sau khi lọc Target
+- Kết quả: 48
+
